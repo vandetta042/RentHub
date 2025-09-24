@@ -1,0 +1,63 @@
+housing_system/
+│── config/
+│   └── db.php                      # database connection file
+│
+│── public/                         # main entry point
+│   ├── index.php                   # homepage (list/search houses)
+│   ├── login.php                   # login page
+│   ├── register.php                # registration page
+│   ├── logout.php                  # logout
+│
+│── users/                          # user dashboards
+│   ├── dashboard.php               # general user dashboard
+│   ├── notifications.php           # view notification 
+│
+│── houses/                         # housing management
+│   ├── add.php                     # add new house (landlord/agent)
+|   ├── browse.php                  # listing made available for student/workers
+|   ├── delete_listing.php          # logic to delete listings(landlord/agent)
+│   ├── edit.php                    # edit listing
+│   ├── flag_reviews.php            # logic for users to flag inappropriate reviews
+│   ├── my_listings.php             # advanced search
+│   ├── view.php                    # single house details
+|
+│── reviews/               
+│   └── add.php                     # submit review
+│
+│── reports/               
+│   └── report.php                  # report landlord/agent
+│
+│── admin/
+|   ├── admin_analytics.php         #analytic reviews                 
+│   ├── dashboard.php               # admin control panel
+|   ├── delete_house.php            # logic to delete houses(using soft delete)
+|   ├── delete_user.php             # logic to delete users(using soft delete) 
+|   ├── handle_houses.php           # (to do**) to contain and handle deleting and restoring logic for house management
+|   ├── handle_reviews.php          # handling deleting and restore logic for reviews
+│   ├── manage_houses.php           # approve/manage(delete/restore(because of soft delete)) listings
+│   ├── reports.php                 # view/resolve reports
+|   ├── restore_house.php           # logic to delete houses
+|   ├── restore(for users).php      # logic to restore users
+|   ├── reviews.php                 # reviews management
+|   ├── suspend.php                 # logic for suspending users temporary
+│   ├── users.php                   # manage users
+|   ├── view_house.php              # house reviewing logic 
+│
+│── includes/
+│   ├── header.php                  # site header
+│   ├── footer.php                  # site footer
+│   ├── notification_helper.php     # logic to assist notification code in ──users/notifications.php
+|   ├── reviews_display.php         #
+|
+|── messages/
+|   ├── conversaton.php              #
+|   ├── inbox.php                    #
+│
+│── assets/
+│   ├── css/
+│   │   └── style.css      # custom styles
+│   ├── js/
+│   │   └── script.js      # custom scripts
+│   └── images/            # static images/uploads
+│
+└── README.md              # notes/documentation

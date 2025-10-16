@@ -15,7 +15,7 @@ $maxPrice         = $_GET['max_price'] ?? '';
 $keyword          = $_GET['keyword'] ?? '';
 
 // --- Pagination setup ---
-$limit = 5; // houses per page (adjust if needed)
+$limit = 6; // houses per page (adjust if needed)
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 $offset = ($page - 1) * $limit;
@@ -75,12 +75,13 @@ $result = $conn->query($query);
     }
 
     .browse-header h2 {
-        color: #2c3e50;
+        color: #1560c1ff;
         margin: 0;
     }
 
     .browse-header a {
-        color: #2c3e50;
+        color: #50789fff;
+        font-weight: bold;
         text-decoration: underline;
         font-size: 1rem;
     }
@@ -88,7 +89,7 @@ $result = $conn->query($query);
     .filter-form {
         display: flex;
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 25px;
         background: #fff;
         border-radius: 10px;
         box-shadow: 0 2px 8px rgba(44, 62, 80, 0.06);
@@ -99,7 +100,7 @@ $result = $conn->query($query);
 
     .filter-form input,
     .filter-form select {
-        padding: 10px;
+        padding: 12px;
         border: 1px solid #d1d5db;
         border-radius: 7px;
         font-size: 1rem;
@@ -108,11 +109,11 @@ $result = $conn->query($query);
     }
 
     .filter-form button {
-        background: #2c3e50;
+        background: #3377bbff;
         color: #fff;
         border: none;
         border-radius: 7px;
-        padding: 10px 18px;
+        padding: 13px 18px;
         font-size: 1rem;
         font-weight: bold;
         cursor: pointer;
@@ -132,7 +133,7 @@ $result = $conn->query($query);
     .house-card {
         background: #fff;
         border-radius: 14px;
-        box-shadow: 0 4px 16px rgba(44, 62, 80, 0.08);
+        box-shadow: 0 4px 16px rgba(61, 116, 172, 0.08);
         padding: 20px 18px 16px 18px;
         display: flex;
         flex-direction: column;
@@ -142,13 +143,13 @@ $result = $conn->query($query);
     }
 
     .house-card:hover {
-        box-shadow: 0 8px 32px rgba(44, 62, 80, 0.13);
+        box-shadow: 0 8px 32px rgba(51, 121, 192, 0.13);
         transform: translateY(-4px) scale(1.01);
     }
 
     .house-card h3 {
         margin: 0 0 8px 0;
-        color: #2c3e50;
+        color: #395c7fff;
     }
 
     .house-card .price {
@@ -182,7 +183,7 @@ $result = $conn->query($query);
     .house-card .view-link {
         margin-top: auto;
         display: inline-block;
-        background: #2c3e50;
+        background: #367ec6ff;
         color: #fff;
         padding: 8px 18px;
         border-radius: 7px;
@@ -192,7 +193,7 @@ $result = $conn->query($query);
     }
 
     .house-card .view-link:hover {
-        background: #34495e;
+        background: #3f88d1ff;
     }
 
     .pagination {
@@ -204,7 +205,7 @@ $result = $conn->query($query);
 
     .pagination a {
         background: #fff;
-        color: #2c3e50;
+        color: #386694ff;
         border: 1px solid #d1d5db;
         border-radius: 6px;
         padding: 6px 14px;
@@ -214,9 +215,9 @@ $result = $conn->query($query);
     }
 
     .pagination a[style*='font-weight:bold'] {
-        background: #2c3e50;
+        background: #3c7bbaff;
         color: #fff;
-        border: 1.5px solid #2c3e50;
+        border: 1.5px solid #3b7cbeff;
     }
 
     .pagination a:hover {
@@ -235,15 +236,17 @@ $result = $conn->query($query);
     <h2>Browse Available Houses</h2>
     <a href="../users/dashboard.php">← Back to Dashboard</a>
 </div>
+
+<!-- filter form -->
 <form method="get" action="browse.php" class="filter-form">
     <input type="text" name="location" placeholder="Location" value="<?php echo htmlspecialchars($selectedLocation); ?>">
     <select name="type">
         <option value="">Any Type</option>
-        <option value="self_contain" <?php if ($selectedType == 'self_contain') echo 'selected'; ?>>Self Contain</option>
-        <option value="single_room" <?php if ($selectedType == 'single_room') echo 'selected'; ?>>Single Room</option>
-        <option value="hostel" <?php if ($selectedType == 'hostel') echo 'selected'; ?>>Hostel</option>
-        <option value="flat" <?php if ($selectedType == 'flat') echo 'selected'; ?>>Flat</option>
-        <option value="shared_apartment" <?php if ($selectedType == 'shared_apartment') echo 'selected'; ?>>Shared Apartment</option>
+        <option value="Self_Contain" <?php if ($selectedType == 'Self_Contain') echo 'selected'; ?>>Self Contain</option>
+        <option value="Single_Room" <?php if ($selectedType == 'Single_Room') echo 'selected'; ?>>Single Room</option>
+        <option value="Hostel" <?php if ($selectedType == 'Hostel') echo 'selected'; ?>>Hostel</option>
+        <option value="Flat" <?php if ($selectedType == 'Flat') echo 'selected'; ?>>Flat</option>
+        <option value="Shared_Apartment" <?php if ($selectedType == 'Shared_Apartment') echo 'selected'; ?>>Shared Apartment</option>
     </select>
     <input type="number" name="min_price" placeholder="Min Price" value="<?php echo htmlspecialchars($minPrice); ?>">
     <input type="number" name="max_price" placeholder="Max Price" value="<?php echo htmlspecialchars($maxPrice); ?>">
@@ -255,9 +258,9 @@ $result = $conn->query($query);
     <div class="house-list">
         <?php while ($row = $result->fetch_assoc()): ?>
             <div class="house-card">
-                <h3><?php echo htmlspecialchars($row['title']); ?></h3>
+                <h3><?php echo ucwords(htmlspecialchars($row['title'])); ?></h3>
                 <div class="price">₦<?php echo number_format($row['price'], 2); ?></div>
-                <div class="meta">Location: <?php echo htmlspecialchars($row['location']); ?> | Type: <?php echo htmlspecialchars(str_replace('_', ' ', $row['house_type'])); ?></div>
+                <div class="meta">Location: <?php echo ucwords(htmlspecialchars($row['location'])); ?> | Type: <?php echo htmlspecialchars(str_replace('_', ' ', $row['house_type'])); ?></div>
                 <div class="desc"><?php echo nl2br(htmlspecialchars($row['description'])); ?></div>
                 <?php if (!empty($row['image_url'])): ?>
                     <img src="../<?php echo htmlspecialchars($row['image_url']); ?>" alt="house thumbnail">

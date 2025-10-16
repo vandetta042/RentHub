@@ -37,18 +37,16 @@ $result = $conn->query($sql);
     }
 
     .admin-users-header a {
-        background: #2c3e50;
-        color: #fff;
-        border-radius: 7px;
+        color: #0a0a0aff;
         padding: 8px 22px;
-        text-decoration: none;
+        text-decoration: underline;
         font-size: 1.05rem;
-        font-weight: 500;
+        font-weight: bold;
         transition: background 0.18s;
     }
 
     .admin-users-header a:hover {
-        background: #34495e;
+        color: #d19e28ff;
     }
 
     .admin-users-card {

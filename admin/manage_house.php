@@ -40,18 +40,16 @@ $result = $conn->query($sql);
     }
 
     .admin-houses-header a {
-        background: #2c3e50;
-        color: #fff;
-        border-radius: 7px;
+        color: #0b0a0aff;
         padding: 8px 22px;
-        text-decoration: none;
+        text-decoration: underline;
         font-size: 1.05rem;
-        font-weight: 500;
+        font-weight: bold;
         transition: background 0.18s;
     }
 
     .admin-houses-header a:hover {
-        background: #34495e;
+        color: rgba(189, 131, 23, 1);
     }
 
     .admin-houses-card {

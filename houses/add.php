@@ -138,7 +138,7 @@ if (isset($success) && isset($title) && isset($house_id)) {
     .add-house-links a {
         color: #2c3e50;
         text-decoration: underline;
-        font-weight: 500;
+        font-weight: bold;
         font-size: 1.04rem;
         transition: color 0.18s;
     }
@@ -154,6 +154,9 @@ if (isset($success) && isset($title) && isset($house_id)) {
         font-weight: 500;
     }
 </style>
+<div class="add-house-links">
+    <a href="my_listings.php">BACK</a>
+</div>
 <div class="add-house-wrapper">
     <div class="add-house-title">Add New House</div>
     <?php if (isset($success)): ?>
@@ -162,6 +165,7 @@ if (isset($success) && isset($title) && isset($house_id)) {
     <?php if (isset($error)): ?>
         <div class="add-house-feedback" style="color:#e74c3c;"><?php echo $error; ?></div>
     <?php endif; ?>
+
     <form method="POST" enctype="multipart/form-data" class="add-house-form">
         <label for="title">House Title</label>
         <input type="text" id="title" name="title" placeholder="House Title" required>
@@ -189,9 +193,6 @@ if (isset($success) && isset($title) && isset($house_id)) {
 
         <button type="submit">Add House</button>
     </form>
-    <div class="add-house-links">
-        <a href="my_listings.php">View My Listings</a>
-        <a href="../users/dashboard.php">Back to Dashboard</a>
-    </div>
+
 </div>
 <?php include("../includes/footer.php"); ?>

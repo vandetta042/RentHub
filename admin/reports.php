@@ -64,18 +64,15 @@ $result = $conn->query($sql);
     }
 
     .admin-reports-header a {
-        background: #2c3e50;
-        color: #fff;
-        border-radius: 7px;
+        color: #040404ff;
         padding: 8px 22px;
-        text-decoration: none;
         font-size: 1.05rem;
-        font-weight: 500;
+        font-weight: bold;
         transition: background 0.18s;
     }
 
     .admin-reports-header a:hover {
-        background: #34495e;
+        color: #c29025ff;
     }
 
     .admin-reports-card {

@@ -8,43 +8,112 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+//calling user details from database
 $userId = $_SESSION['user_id'];
 $stmt = $conn->prepare("SELECT full_name, email, phone, profile_pictures FROM users WHERE user_id = ?");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
 ?>
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <title>My Profile</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+<?php include('../includes/header.php'); ?>
+<style>
+    .profile-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 80vh;
+        background: #f6f7fa;
+    }
 
-<body class="bg-light">
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card shadow-lg rounded-4">
-                    <div class="card-body text-center p-4">
-                        <img src="<?php echo $user['profile_pictures'] ? '../public/profile/' . htmlspecialchars($user['profile_pictures']) : 'https://via.placeholder.com/150'; ?>"
-                            class="rounded-circle mb-3" alt="Profile Picture" width="120" height="120">
+    .profile-card {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+        padding: 38px 32px 32px 32px;
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+        margin-top: 24px;
+    }
 
-                        <h4 class="fw-bold"><?php echo htmlspecialchars($user['full_name']); ?></h4>
-                        <p class="text-muted mb-1"><?php echo htmlspecialchars($user['email']); ?></p>
-                        <p class="text-muted"><?php echo htmlspecialchars($user['phone']); ?></p>
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #e3eaf3;
+        background: #fff;
+        margin-bottom: 18px;
+    }
 
-                        <a href="edit_profile.php" class="btn btn-primary btn-lg mt-3 rounded-pill px-4">
-                            ✏️ Edit Profile
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+    .profile-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #4a6a93;
+        margin-bottom: 8px;
+    }
+
+    .profile-email,
+    .profile-phone {
+        color: #6c7a89;
+        font-size: 1.08rem;
+        margin-bottom: 4px;
+    }
+
+    .edit-btn {
+        display: inline-block;
+        background: #4a6a93;
+        color: #fff;
+        border: none;
+        border-radius: 24px;
+        padding: 12px 32px;
+        font-size: 1.08rem;
+        font-weight: 500;
+        margin-top: 22px;
+        cursor: pointer;
+        transition: background 0.2s;
+        text-decoration: none;
+    }
+
+    .edit-btn:hover {
+        background: #2d4666;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 18px;
+        color: #4a6a93;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: color 0.2s;
+    }
+
+    .back-link:hover {
+        color: #e74c3c;
+    }
+
+    @media (max-width: 500px) {
+        .profile-card {
+            padding: 18px 8px;
+        }
+
+        .profile-avatar {
+            width: 90px;
+            height: 90px;
+        }
+    }
+</style>
+<div class="profile-container">
+    <a href="dashboard.php" class="back-link">← Back to dashboard</a>
+    <div class="profile-card">
+        <img src="<?php echo $user['profile_pictures'] ? '../public/asset/profile_pictures/' . htmlspecialchars($user['profile_pictures']) : '../public/asset/profile_pictures/default-avatar.png'; ?>"
+            class="profile-avatar" alt="Profile Picture">
+        <div class="profile-name"><?php echo htmlspecialchars($user['full_name']); ?></div>
+        <div class="profile-email"><?php echo htmlspecialchars($user['email']); ?></div>
+        <div class="profile-phone"><?php echo htmlspecialchars($user['phone']); ?></div>
+        <a href="edit_profile.php" class="edit-btn">✏️ Edit Profile</a>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+</div>
+<?php include('../includes/footer.php'); ?>

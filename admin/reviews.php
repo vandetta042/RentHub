@@ -10,11 +10,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'admin') {
 
 include("../config/db.php");
 
-// --- ASSUMPTIONS ---
-// For a better display, we'll get usernames and house names.
-// This query assumes you have a 'users' table with 'user_id' and 'username' columns,
-// and a 'houses' table with 'house_id' and 'house_name' columns.
-// If your tables are named differently, please adjust the JOINs below.
 
 $sql = "
     SELECT 
@@ -74,18 +69,16 @@ $result = $conn->query($sql);
         }
 
         .admin-reviews-header a {
-            background: #2c3e50;
-            color: #fff;
-            border-radius: 7px;
+            color: #111111ff;
             padding: 8px 22px;
-            text-decoration: none;
+            text-decoration: underline;
             font-size: 1.05rem;
-            font-weight: 500;
+            font-weight: bold;
             transition: background 0.18s;
         }
 
         .admin-reviews-header a:hover {
-            background: #34495e;
+            color: #c1952eff;
         }
 
         .admin-reviews-card {

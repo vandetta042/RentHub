@@ -60,19 +60,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         margin: 40px auto;
         background: #fff;
         border-radius: 16px;
-        box-shadow: 0 4px 24px rgba(44, 62, 80, 0.08);
+        box-shadow: 0 4px 24px rgba(103, 87, 53, 0.08);
         padding: 32px 28px 24px 28px;
         text-align: center;
     }
 
     .auth-container h2 {
         margin-bottom: 18px;
-        color: #2c3e50;
+        color: #685938ff;
     }
 
     .auth-container input[type="email"],
     .auth-container input[type="password"] {
-        width: 100%;
+        width: 90%;
         padding: 12px 10px;
         margin: 10px 0 18px 0;
         border: 1px solid #d1d5db;
@@ -83,13 +83,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     .auth-container input:focus {
-        border: 1.5px solid #2c3e50;
+        border: 1.5px solid #50462cff;
         outline: none;
     }
 
     .auth-container button {
-        width: 100%;
-        background: #2c3e50;
+        width: 90%;
+        background: #1560c1ff;
         color: #fff;
         border: none;
         border-radius: 8px;
@@ -102,7 +102,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     .auth-container button:hover {
-        background: #34495e;
+        background: #1c6ea9ff;
+    }
+
+    .auth-container button:active {
+        transform: scale(0.98);
     }
 
     .auth-container .error {
@@ -119,7 +123,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     .auth-container a {
-        color: #2c3e50;
+        color: #50452cff;
         text-decoration: underline;
     }
 </style>

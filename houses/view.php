@@ -65,42 +65,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
 
     .view-nav a {
         display: inline-block;
-        background: #f4f6f8;
-        color: #2c3e50;
-        border: 1.5px solid #2c3e50;
-        border-radius: 8px;
+        color: #3d78b3ff;
         padding: 8px 22px;
         font-size: 1.05rem;
-        font-weight: 500;
-        text-decoration: none;
-        transition: background 0.18s, color 0.18s, border 0.18s;
-        box-shadow: 0 2px 8px rgba(44, 62, 80, 0.04);
+        font-weight: bold;
+        text-decoration: underline;
     }
 
     .view-nav a:hover {
-        background: #2c3e50;
-        color: #fff;
-        border: 1.5px solid #2c3e50;
-        text-decoration: none;
+        color: #ce991fff;
     }
 
     .house-view-main {
         display: flex;
-        flex-wrap: wrap;
-        gap: 48px;
-        max-width: 1400px;
-        margin: 0 auto 48px auto;
-        align-items: flex-start;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(60, 83, 106, 0.06);
+        padding: 22px 20px 16px 20px;
+        max-width: 1100px;
+        margin: 0 auto 30px auto;
     }
 
     .house-view-card {
         background: #fff;
         border-radius: 20px;
-        box-shadow: 0 4px 32px rgba(44, 62, 80, 0.10);
-        padding: 44px 44px 36px 44px;
+        /* box-shadow: 0 4px 32px rgba(44, 62, 80, 0.10); */
+        padding: 22px 20px 16px 20px;
         flex: 2 1 700px;
         min-width: 420px;
-        max-width: 900px;
+        max-width: 1100px;
     }
 
     .house-view-images-row {
@@ -197,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
     }
 
     .close-modal {
-        background: #2c3e50;
+        background: #3c7ec1ff;
         color: #fff;
         border: none;
         border-radius: 6px;
@@ -208,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
     }
 
     .msg-btn {
-        background: #2c3e50;
+        background: #3276baff;
         color: #fff;
         border: none;
         border-radius: 8px;
@@ -221,7 +214,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
     }
 
     .msg-btn:hover {
-        background: #34495e;
+        background: #5c86b0ff;
+        transform: translateY(-2px) scale(1.04);
     }
 
     .house-view-images-col {
@@ -252,7 +246,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
     .report-section {
         background: #fff;
         border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(44, 62, 80, 0.06);
+        box-shadow: 0 2px 8px rgba(60, 83, 106, 0.06);
         padding: 22px 20px 16px 20px;
         max-width: 1100px;
         margin: 0 auto 30px auto;
@@ -260,7 +254,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
 
     .review-section h3,
     .report-section h3 {
-        color: #2c3e50;
+        color: #2c5a89ff;
         margin-top: 0;
     }
 
@@ -290,7 +284,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
 
     .review-section button,
     .report-section button {
-        background: #2c3e50;
+        background: #2f68a1ff;
         color: #fff;
         border: none;
         border-radius: 7px;
@@ -300,22 +294,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
         cursor: pointer;
         margin-top: 8px;
         transition: background 0.2s;
+        transform: translateY(-2px) scale(1.04);
     }
 
     .review-section button:hover,
     .report-section button:hover {
-        background: #34495e;
+        background: #2b6197ff;
+        transform: translateY(-2px) scale(1.04);
     }
 
     .review-section label,
     .report-section label {
         font-weight: 500;
-        color: #2c3e50;
+        color: #38699aff;
     }
 </style>
 <div class="view-nav">
     <a href="browse.php">← Back to Browse</a>
-    <a href="../users/dashboard.php">← Back to Dashboard</a>
 </div>
 <div class="house-view-main">
     <div class="house-view-card">

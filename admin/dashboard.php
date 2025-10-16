@@ -32,13 +32,13 @@ $totalReports = $conn->query("SELECT COUNT(*) as count FROM reports WHERE status
     }
 
     .admin-dashboard-header h1 {
-        color: #2c3e50;
+        color: #3776b6ff;
         font-size: 2.1rem;
         margin: 0;
     }
 
     .admin-dashboard-header .admin-badge {
-        background: #2c3e50;
+        background: #2973beff;
         color: #fff;
         border-radius: 8px;
         padding: 8px 18px;
@@ -56,7 +56,7 @@ $totalReports = $conn->query("SELECT COUNT(*) as count FROM reports WHERE status
     }
 
     .admin-nav a {
-        background: #2c3e50;
+        background: #3f6c99ff;
         color: #fff;
         border-radius: 7px;
         padding: 10px 22px;
@@ -68,7 +68,7 @@ $totalReports = $conn->query("SELECT COUNT(*) as count FROM reports WHERE status
 
     .admin-nav a:hover,
     .admin-nav a.active {
-        background: #34495e;
+        background: #92afccff;
         color: #fff;
     }
 
@@ -93,7 +93,7 @@ $totalReports = $conn->query("SELECT COUNT(*) as count FROM reports WHERE status
 
     .admin-card h2 {
         margin-top: 0;
-        color: #2c3e50;
+        color: #43698eff;
         font-size: 1.3rem;
         margin-bottom: 12px;
     }
@@ -106,7 +106,7 @@ $totalReports = $conn->query("SELECT COUNT(*) as count FROM reports WHERE status
 
     .admin-card ul li {
         font-size: 1.08rem;
-        color: #34495e;
+        color: #375d83ff;
         margin-bottom: 8px;
         font-weight: 500;
     }
@@ -129,7 +129,7 @@ $totalReports = $conn->query("SELECT COUNT(*) as count FROM reports WHERE status
         <span>👑 <?php echo htmlspecialchars($_SESSION['full_name']); ?> (Admin)</span>
     </div>
     <div class="admin-nav">
-        <a href="#analytics">View Analytics</a>
+        <!-- <a href="#analytics">View Analytics</a> -->
         <a href="users.php">Manage Users</a>
         <a href="manage_house.php">Manage Houses</a>
         <a href="reviews.php">View Reviews</a>

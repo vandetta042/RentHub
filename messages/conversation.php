@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
         $stmt->close();
 
         // 2️⃣ Add notification for recipient
-        $notificationContent = "You received a new message from $senderName";
+        $notificationContent = "You received a house inquiry from $senderName";
         $notificationLink = "../messages/conversation.php?user_id=$currentUser&house_id=$houseId&page=last";
         addNotification($conn, $otherUserId, $notificationContent, $notificationLink);
     }
@@ -95,37 +95,212 @@ $updateStmt->close();
 ?>
 
 <?php include("../includes/header.php"); ?>
-<h2>Conversation about: <?php echo htmlspecialchars($house['title']); ?></h2>
-<a href="inbox.php">← Back to Inbox</a><br><br>
-<p><a href="../users/dashboard.php">← Back to Dashboard</a></p>
+<style>
+    body {
+        background: #f4f6fa;
+        color: #23272f;
+    }
 
-<div>
-    <?php if (!empty($messages)): ?>
-        <?php foreach ($messages as $row): ?>
-            <div class="msg <?php echo ($row['sender_id'] == $currentUser) ? 'me' : 'other'; ?>">
-                <strong><?php echo htmlspecialchars($row['full_name']); ?></strong><br>
-                <?php echo nl2br(htmlspecialchars($row['content'])); ?><br>
-                <small><?php echo $row['created_at']; ?></small>
-            </div>
-        <?php endforeach; ?>
-    <?php else: ?>
-        <p>No messages yet.</p>
-    <?php endif; ?>
+    .conv-wrapper {
+        max-width: 1100px;
+        margin: 36px auto 0 auto;
+        background: #f9fafb;
+        border-radius: 16px;
+        box-shadow: 0 4px 18px rgba(44, 62, 80, 0.10);
+        padding: 36px 32px 28px 32px;
+        border: 1px solid #e0e3e7;
+    }
+
+    .conv-title {
+        color: #263238;
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .conv-nav {
+        float: right;
+        margin-bottom: 18px;
+        text-align: left;
+    }
+
+    .conv-nav a {
+        color: #607d8b;
+        text-decoration: underline;
+        font-weight: 500;
+        font-size: 1.04rem;
+        transition: color 0.18s;
+    }
+
+    .conv-nav a:hover {
+        color: #e67e22;
+    }
+
+    .conv-messages {
+        margin-bottom: 18px;
+        min-height: 180px;
+        background: #f9fafb;
+        border-radius: 12px;
+        padding: 18px 10px;
+        box-shadow: 0 1px 4px rgba(44, 62, 80, 0.04);
+    }
+
+    .conv-msg {
+        max-width: 80%;
+        margin-bottom: 14px;
+        padding: 12px 16px;
+        border-radius: 12px;
+        background: #e7e9ec;
+        color: #263238;
+        font-size: 1.04rem;
+        box-shadow: 0 2px 8px rgba(44, 62, 80, 0.04);
+        position: relative;
+        word-break: break-word;
+    }
+
+    .conv-msg.me {
+        background: #c8e6c9;
+        color: #263238;
+        margin-left: auto;
+        text-align: right;
+    }
+
+    .conv-msg.other {
+        background: #eceff1;
+        color: #263238;
+        margin-right: auto;
+        text-align: left;
+    }
+
+    .conv-msg .conv-sender {
+        font-weight: 600;
+        font-size: 0.98rem;
+        margin-bottom: 2px;
+        display: block;
+        color: #607d8b;
+    }
+
+    .conv-msg .conv-date {
+        color: #90a4ae;
+        font-size: 0.93rem;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .conv-pagination {
+        margin-bottom: 18px;
+        text-align: center;
+        font-size: 1.04rem;
+    }
+
+    .conv-pagination a {
+        color: #607d8b;
+        text-decoration: underline;
+        margin: 0 8px;
+        font-weight: 500;
+        transition: color 0.18s;
+    }
+
+    .conv-pagination a:hover {
+        color: #374151;
+    }
+
+    .conv-form-title {
+        font-size: 1.08rem;
+        color: #263238;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+
+    .conv-form textarea {
+        width: 100%;
+        min-height: 70px;
+        padding: 10px;
+        border-radius: 7px;
+        border: 1.5px solid #e0e0e0;
+        font-size: 1.05rem;
+        background: #f7f8fa;
+        color: #263238;
+        margin-bottom: 10px;
+        resize: vertical;
+        transition: border 0.18s;
+    }
+
+    .conv-form textarea:focus {
+        border: 1.5px solid #90a4ae;
+        outline: none;
+    }
+
+    .conv-form button {
+        background: #607d8b;
+        color: #fff;
+        border: none;
+        border-radius: 7px;
+        padding: 10px 28px;
+        font-size: 1.08rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.18s;
+    }
+
+    .conv-form button:hover {
+        background: #374151;
+        color: #fff;
+    }
+
+    .back-inbox-btn {
+        display: inline-block;
+        /* background: #607d8b; */
+        color: #fff !important;
+        padding: 8px 20px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.04rem;
+        /* box-shadow: 0 1px 4px rgba(44, 62, 80, 0.08); */
+        transition: background 0.18s, color 0.18s;
+        margin-bottom: 8px;
+    }
+
+    .back-inbox-btn:hover {
+        color: #fff !important;
+        cursor: pointer;
+    }
+</style>
+<div class="conv-nav">
+    <span class="back-inbox-btn"><a href="inbox.php">← Back to Inbox</a></span>
 </div>
+<div class="conv-wrapper">
+    <div class="conv-title">Conversation about: <?php echo htmlspecialchars($house['title']); ?></div>
 
-<div class="pagination">
-    <?php if ($page > 1): ?>
-        <a href="conversation.php?user_id=<?php echo $otherUserId; ?>&house_id=<?php echo $houseId; ?>&page=<?php echo $page - 1; ?>">⬅ Prev</a>
-    <?php endif; ?>
-    Page <?php echo $page; ?> of <?php echo $totalPages; ?>
-    <?php if ($page < $totalPages): ?>
-        <a href="conversation.php?user_id=<?php echo $otherUserId; ?>&house_id=<?php echo $houseId; ?>&page=<?php echo $page + 1; ?>">Next ➡</a>
-    <?php endif; ?>
+
+    <div class="conv-messages">
+        <?php if (!empty($messages)): ?>
+            <?php foreach ($messages as $row): ?>
+                <div class="conv-msg <?php echo ($row['sender_id'] == $currentUser) ? 'me' : 'other'; ?>">
+                    <span class="conv-sender"><?php echo htmlspecialchars($row['full_name']); ?></span>
+                    <?php echo nl2br(htmlspecialchars($row['content'])); ?>
+                    <span class="conv-date"><?php echo $row['created_at']; ?></span>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p>No messages yet.</p>
+        <?php endif; ?>
+    </div>
+    <div class="conv-pagination">
+        <?php if ($page > 1): ?>
+            <a href="conversation.php?user_id=<?php echo $otherUserId; ?>&house_id=<?php echo $houseId; ?>&page=<?php echo $page - 1; ?>">⬅ Prev</a>
+        <?php endif; ?>
+        Page <?php echo $page; ?> of <?php echo $totalPages; ?>
+        <?php if ($page < $totalPages): ?>
+            <a href="conversation.php?user_id=<?php echo $otherUserId; ?>&house_id=<?php echo $houseId; ?>&page=<?php echo $page + 1; ?>">Next ➡</a>
+        <?php endif; ?>
+    </div>
+    <div class="conv-form-title">Send a Message</div>
+    <form method="post" action="" class="conv-form">
+        <textarea name="message" required></textarea>
+        <button type="submit">Send</button>
+    </form>
 </div>
-
-<h3>Send a Message</h3>
-<form method="post" action="">
-    <textarea name="message" rows="3" cols="50" required></textarea><br>
-    <button type="submit">Send</button>
-</form>
 <?php include("../includes/footer.php"); ?>

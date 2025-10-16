@@ -31,20 +31,19 @@ if ($userId) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Housing Portal</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
-            background: #f4f6f8;
+            background: #edededff;
         }
 
         .main-header {
-            background: #2c3e50;
+            background: #1f5eb1ff;
             color: #fff;
-            padding: 0;
+            padding: 20px 20px;
             margin-bottom: 0;
-            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+            box-shadow: 0 2px 8px rgba(197, 140, 34, 0.08);
         }
 
         .header-flex {
@@ -88,7 +87,7 @@ if ($userId) {
 
         .header-link:hover,
         .header-link.active {
-            background: #34495e;
+            background: #529ad4ff;
             color: #fff;
         }
 
@@ -122,7 +121,7 @@ if ($userId) {
         <div class="header-flex">
             <div class="header-logo">
                 <img src="../public/asset/logo/logo.png" alt="Logo" onerror="this.style.display='none'">
-                Student Housing Portal
+                RentHub Portal
             </div>
             <nav class="header-nav">
                 <a href="../public/index.php" class="header-link">Home</a>

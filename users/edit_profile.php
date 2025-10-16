@@ -16,69 +16,161 @@ $stmt->bind_param("i", $userId);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
 ?>
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Profile</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
 
-<body class="bg-light">
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-md-7">
-                <div class="card shadow-lg rounded-4">
-                    <div class="card-header bg-primary text-white text-center py-3 rounded-top-4">
-                        <h4 class="mb-0">Edit Profile</h4>
-                    </div>
-                    <div class="card-body p-4">
+<?php include('../includes/header.php'); ?>
+<style>
+    .edit-profile-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 80vh;
+        background: #f6f7fa;
+    }
 
-                        <!-- Update Info -->
-                        <form method="post" action="update_profile.php" enctype="multipart/form-data">
-                            <h5 class="fw-bold mb-3">Personal Info</h5>
-                            <div class="mb-3">
-                                <label class="form-label">Full Name</label>
-                                <input type="text" name="full_name" class="form-control" value="<?php echo htmlspecialchars($user['full_name']); ?>" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($user['email']); ?>" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Phone</label>
-                                <input type="text" name="phone" class="form-control" value="<?php echo htmlspecialchars($user['phone']); ?>">
-                            </div>
+    .edit-profile-card {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+        padding: 38px 32px 32px 32px;
+        max-width: 440px;
+        width: 100%;
+        margin-top: 24px;
+    }
 
-                            <h5 class="fw-bold mt-4 mb-3">Profile Picture</h5>
-                            <div class="mb-3">
-                                <img src="<?php echo $user['profile_pictures'] ? '../public/profile/' . htmlspecialchars($user['profile_pictures']) : 'https://via.placeholder.com/100'; ?>"
-                                    class="rounded-circle mb-2" width="100" height="100">
-                                <input type="file" name="profile_picture" class="form-control">
-                            </div>
+    .edit-profile-title {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #4a6a93;
+        margin-bottom: 18px;
+    }
 
-                            <h5 class="fw-bold mt-4 mb-3">Change Password</h5>
-                            <div class="mb-3">
-                                <label class="form-label">New Password</label>
-                                <input type="password" name="new_password" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Confirm Password</label>
-                                <input type="password" name="confirm_password" class="form-control">
-                            </div>
+    .edit-profile-form label {
+        display: block;
+        font-weight: 500;
+        color: #4a6a93;
+        margin-bottom: 6px;
+        font-size: 1.05rem;
+    }
 
-                            <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-success btn-lg rounded-pill">💾 Save Changes</button>
-                            </div>
-                        </form>
+    .edit-profile-form input[type="text"],
+    .edit-profile-form input[type="email"],
+    .edit-profile-form input[type="password"],
+    .edit-profile-form input[type="file"] {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #e3eaf3;
+        margin-bottom: 16px;
+        font-size: 1rem;
+        background: #f6f7fa;
+        transition: border 0.2s;
+    }
 
-                    </div>
-                </div>
+    .edit-profile-form input[type="file"] {
+        padding: 6px 0;
+    }
+
+    .edit-profile-form input:focus {
+        border-color: #4a6a93;
+        outline: none;
+    }
+
+    .edit-profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #e3eaf3;
+        background: #fff;
+        margin-bottom: 12px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .edit-profile-section {
+        margin-bottom: 24px;
+    }
+
+    .edit-profile-btn {
+        display: block;
+        width: 100%;
+        background: #4a6a93;
+        color: #fff;
+        border: none;
+        border-radius: 24px;
+        padding: 14px 0;
+        font-size: 1.08rem;
+        font-weight: 500;
+        margin-top: 18px;
+        cursor: pointer;
+        transition: background 0.2s;
+        text-decoration: none;
+    }
+
+    .edit-profile-btn:hover {
+        background: #2d4666;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 18px;
+        color: #4a6a93;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: color 0.2s;
+    }
+
+    .back-link:hover {
+        color: #e74c3c;
+    }
+
+    @media (max-width: 500px) {
+        .edit-profile-card {
+            padding: 18px 8px;
+        }
+
+        .edit-profile-avatar {
+            width: 70px;
+            height: 70px;
+        }
+    }
+</style>
+<div class="edit-profile-container">
+    <a href="profile.php" class="back-link">← Back to profile</a>
+    <div class="edit-profile-card">
+        <div class="edit-profile-title">Edit Profile</div>
+        <form method="post" action="update_profile.php" enctype="multipart/form-data" class="edit-profile-form">
+            <div class="edit-profile-section">
+                <label for="full_name">Full Name</label>
+                <input type="text" name="full_name" id="full_name" value="<?php echo htmlspecialchars($user['full_name']); ?>">
             </div>
-        </div>
+            <div class="edit-profile-section">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($user['email']); ?>">
+            </div>
+            <div class="edit-profile-section">
+                <label for="phone">Phone</label>
+                <input type="text" name="phone" id="phone" value="<?php echo htmlspecialchars($user['phone']); ?>">
+            </div>
+            <div class="edit-profile-section">
+                <label>Profile Picture</label>
+                <img src="<?php echo $user['profile_pictures'] ? '../public/asset/profile_pictures/' . htmlspecialchars($user['profile_pictures']) : '../public/asset/profile_pictures/default-avatar.png'; ?>" class="edit-profile-avatar" alt="Profile Picture">
+                <input type="file" name="profile_picture">
+            </div>
+            <div class="edit-profile-section">
+                <label for="new_password">New Password</label>
+                <input type="password" name="new_password" id="new_password">
+            </div>
+            <div class="edit-profile-section">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" name="confirm_password" id="confirm_password">
+            </div>
+            <button type="submit" name="update_profile" class="edit-profile-btn">💾 Save Changes</button>
+        </form>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+</div>
+<?php include('../includes/footer.php'); ?>

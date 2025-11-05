@@ -225,7 +225,7 @@ $totalReports = $conn->query("SELECT COUNT(*) as count FROM reports WHERE status
     <div class="admin-nav">
         <a href="users.php"><i class="fa-solid fa-users"></i> Manage Users</a>
         <a href="manage_house.php"><i class="fa-solid fa-house"></i> Manage Houses</a>
-        <a href="reviews.php"><i class="fa-solid fa-star"></i> View Reviews</a>
+        <a href="reviews.php"><i class="fa-solid fa-star"></i> Management Reviews</a>
         <a href="reports.php"><i class="fa-solid fa-flag"></i> View Reports</a>
     </div>
 

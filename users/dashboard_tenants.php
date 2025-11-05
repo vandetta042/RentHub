@@ -34,7 +34,10 @@ $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
 ?>
 
-<?php include('../includes/header.php'); ?>
+<?php $title = "Dashboard";
+include("../includes/header.php");
+?>
+<!-- CSS-only sidebar toggle (no JS) -->
 <style>
     body {
         background: #f6f7fa;
@@ -56,6 +59,7 @@ $user = $stmt->get_result()->fetch_assoc();
         align-items: flex-start;
         padding: 32px 20px 20px 20px;
         box-shadow: 2px 0 12px rgba(0, 0, 0, 0.04);
+        transition: transform 0.28s ease, box-shadow 0.28s ease;
     }
 
     .sidebar .logo {
@@ -86,6 +90,18 @@ $user = $stmt->get_result()->fetch_assoc();
         transition: background 0.2s, color 0.2s;
     }
 
+    .sidebar-icon {
+        width: 22px;
+        text-align: center;
+        margin-right: 12px;
+        font-size: 1.05rem;
+        color: rgba(227, 234, 243, 0.95);
+    }
+
+    .sidebar-text {
+        display: inline-block;
+    }
+
     .sidebar a.active,
     .sidebar a:hover {
         background: rgba(255, 255, 255, 0.13);
@@ -105,6 +121,30 @@ $user = $stmt->get_result()->fetch_assoc();
         margin-left: 10px;
     }
 
+    /* Checkbox toggle for mobile sidebar (hidden) */
+    #sidebar-toggle {
+        display: none;
+    }
+
+    .sidebar-toggle-label {
+        display: none;
+        position: fixed;
+        left: 16px;
+        top: calc(var(--header-height) + 6px);
+        /* positioned under sticky header */
+        z-index: 1200;
+        background: #1f5eb1ff;
+        color: #fff;
+        padding: 8px 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        cursor: pointer;
+    }
+
+    .sidebar-toggle-label i {
+        font-size: 1.15rem;
+    }
+
     .main {
         flex: 1;
         display: flex;
@@ -120,6 +160,27 @@ $user = $stmt->get_result()->fetch_assoc();
         align-items: center;
         border-bottom: 1px solid #e3eaf3;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+
+    .topbar-search {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .topbar-search input {
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid #e6eef6;
+        min-width: 180px;
+    }
+
+    .topbar-cta {
+        background: #1f5eb1ff;
+        color: #fff;
+        padding: 8px 12px;
+        border-radius: 8px;
+        text-decoration: none;
     }
 
     .topbar .welcome {
@@ -212,22 +273,46 @@ $user = $stmt->get_result()->fetch_assoc();
             flex-direction: column;
         }
 
+        /* show the toggle button */
+        .sidebar-toggle-label {
+            display: block;
+        }
+
+        /* Collapsible sidebar: hidden by default on small screens */
         .sidebar {
-            width: 100%;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-            padding: 18px 10px;
+            position: fixed;
+            left: 0;
+            top: var(--header-height);
+            bottom: 0;
+            width: 240px;
+            transform: translateX(-104%);
+            z-index: 1100;
+            padding-top: calc(var(--header-height) + 6px);
+        }
+
+        /* when checked, slide in */
+        #sidebar-toggle:checked~.dashboard-container .sidebar {
+            transform: translateX(0);
+            box-shadow: 2px 0 18px rgba(0, 0, 0, 0.18);
+        }
+
+        /* dim main area when sidebar open */
+        #sidebar-toggle:checked~.dashboard-container .main::before {
+            content: '';
+            position: fixed;
+            inset: 0 0 0 0;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 1050;
         }
 
         .sidebar ul {
             display: flex;
-            flex-direction: row;
-            gap: 18px;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .main {
-            padding: 0;
+            padding-top: calc(var(--header-height) + 8px);
         }
 
         .content {
@@ -236,23 +321,36 @@ $user = $stmt->get_result()->fetch_assoc();
     }
 </style>
 
+<!-- Mobile sidebar toggle (checkbox hack) -->
+<input type="checkbox" id="sidebar-toggle" aria-hidden="true">
+<label for="sidebar-toggle" class="sidebar-toggle-label" aria-hidden="true" title="Open menu">
+    <i class="fa-solid fa-bars"></i>
+</label>
+
 <div class="dashboard-container">
     <aside class="sidebar">
-        <div class="logo">🏠 RentHub</div>
+        <div class="logo">RentHub</div>
         <ul>
-            <li><a href="profile.php" class="sidebar-link">Profile</a></li>
-            <li><a href="../messages/inbox.php" class="sidebar-link">Messages <?php if ($unreadMsgCount > 0): ?>
+            <li><a href="profile.php" class="sidebar-link"><i class="fa-solid fa-user sidebar-icon" aria-hidden="true"></i><span class="sidebar-text">Profile</span></a></li>
+            <li><a href="../messages/inbox.php" class="sidebar-link"><i class="fa-solid fa-envelope sidebar-icon" aria-hidden="true"></i><span class="sidebar-text">Messages</span>
+                    <?php if ($unreadMsgCount > 0): ?>
                         <span class="sidebar-badge"><?php echo $unreadMsgCount; ?></span>
                     <?php endif; ?></a></li>
-            <li><a href="../public/logout.php" class="sidebar-link">Logout</a></li>
+            <li>
+                <a href="/Affordable $ Student Housing Transparency System (ASTHS)/services/tenant_payments.php">
+                    <i class="fas fa-receipt"></i> My Payments
+                </a>
+            </li>
+
+            <li><a href="../public/logout.php" class="sidebar-link"><i class="fa-solid fa-sign-out-alt sidebar-icon" aria-hidden="true"></i><span class="sidebar-text">Logout</span></a></li>
         </ul>
     </aside>
     <main class="main">
         <header class="topbar">
-            <div class="welcome">Hello, <?= htmlspecialchars($_SESSION['full_name']); ?> 👋(<?php echo htmlspecialchars($_SESSION['user_type']); ?>)</div>
+            <div class="welcome">Hello, <?= htmlspecialchars($_SESSION['full_name']); ?> (<?php echo htmlspecialchars($_SESSION['user_type']); ?>)</div>
             <div class="topbar-right">
                 <a href="../messages/inbox.php" class="notification" title="Messages">
-                    <span>✉️</span>
+                    <i class="fa-solid fa-envelope"></i>
                     <?php if ($unreadMsgCount > 0): ?>
                         <span class="badge"><?php echo $unreadMsgCount; ?></span>
                     <?php endif; ?>
@@ -264,12 +362,88 @@ $user = $stmt->get_result()->fetch_assoc();
             </div>
         </header>
         <section class="content">
-            <h1 style="color:#4a6a93;font-size:2rem;font-weight:600;">Dashboard</h1>
-            <div class="cards">
-                <div class="card"><a href="../houses/browse.php">🏠 Listings</a></div>
-                <div class="card"><a href="favourites.php">⭐ Favourites</a></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+                <h1 style="color:#4a6a93;font-size:2rem;font-weight:600;margin:0;">Dashboard</h1>
+                <div class="topbar-search">
+                    <input type="search" placeholder="Search listings, landlords..." aria-label="Search">
+                    <a href="../houses/browse.php" class="topbar-cta"><i class="fa-solid fa-search" style="margin-right:6px"></i>Browse</a>
+                </div>
+            </div>
+
+            <!-- quick stats -->
+            <div class="stats" aria-hidden="false">
+                <div class="stat">
+                    <div class="num"><?php echo intval( /* placeholder */8); ?></div>
+                    <div class="label">Saved Listings</div>
+                </div>
+                <div class="stat">
+                    <div class="num"><?php echo intval( /* placeholder */2); ?></div>
+                    <div class="label">Unread Messages</div>
+                </div>
+                <div class="stat">
+                    <div class="num"><?php echo intval( /* placeholder */5); ?></div>
+                    <div class="label">Recent Views</div>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:18px; margin-top:18px; align-items:start;">
+                <div class="panel">
+                    <h3 style="margin-top:0;">Recommended for you</h3>
+                    <div class="cards" style="margin-top:8px;">
+                        <div class="card"><a href="../houses/browse.php"><i class="fa-solid fa-house fa-fw" style="margin-right:8px;color:#4a6a93;"></i>Nearby: 2BR near campus</a></div>
+                        <div class="card"><a href="#"><i class="fa-solid fa-house-chimney fa-fw" style="margin-right:8px;color:#4a6a93;"></i>Affordable studio</a></div>
+                    </div>
+                </div>
+                <aside class="panel recent-activity">
+                    <h3 style="margin-top:0;">Recent Activity</h3>
+                    <div class="recent-item">
+                        <div class="recent-dot"></div>
+                        <div><strong><i class="fa-solid fa-comments" style="margin-right:8px;color:#4a6a93"></i>New message</strong>
+                            <div style="font-size:0.85rem;color:#6b7b8f;">Landlord replied to your enquiry • 1h ago</div>
+                        </div>
+                    </div>
+                    <div class="recent-item">
+                        <div class="recent-dot"></div>
+                        <div><strong><i class="fa-solid fa-eye" style="margin-right:8px;color:#4a6a93"></i>Listing viewed</strong>
+                            <div style="font-size:0.85rem;color:#6b7b8f;">You viewed 'Affordable studio' • Yesterday</div>
+                        </div>
+                    </div>
+                    <div class="recent-item">
+                        <div class="recent-dot"></div>
+                        <div><strong><i class="fa-solid fa-bookmark" style="margin-right:8px;color:#4a6a93"></i>Saved listing</strong>
+                            <div style="font-size:0.85rem;color:#6b7b8f;">You saved '2BR near campus' • 3d ago</div>
+                        </div>
+                    </div>
+                </aside>
             </div>
         </section>
     </main>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const toggleLabel = document.querySelector('.sidebar-toggle-label');
+
+        document.addEventListener('click', function(e) {
+            if (!toggle) return;
+            if (!toggle.checked) return;
+            if (sidebar.contains(e.target) || (toggleLabel && toggleLabel.contains(e.target))) return;
+            toggle.checked = false;
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && toggle && toggle.checked) toggle.checked = false;
+        });
+
+        if (toggleLabel) {
+            toggleLabel.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!toggle) return;
+                toggle.checked = !toggle.checked;
+            });
+        }
+    });
+</script>
 <?php include('../includes/footer.php'); ?>

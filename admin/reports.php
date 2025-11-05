@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'admin') {
 
 include("../config/db.php");
 
-// ✅ Handle resolve action
+// Handle resolve action
 if (isset($_GET['resolve']) && is_numeric($_GET['resolve'])) {
     $report_id = (int) $_GET['resolve'];
 
@@ -20,7 +20,7 @@ if (isset($_GET['resolve']) && is_numeric($_GET['resolve'])) {
     exit();
 }
 
-// ✅ Fetch all reports (newest first)
+// Fetch all reports (newest first)
 $sql = "SELECT r.report_id, r.reason, r.details, r.status, r.created_at,
                h.title AS house_title, h.house_id,
                reporter.full_name AS reporter_name,
@@ -34,7 +34,10 @@ $sql = "SELECT r.report_id, r.reason, r.details, r.status, r.created_at,
 $result = $conn->query($sql);
 ?>
 
-<?php include("../includes/header.php"); ?>
+<?php $title = "Reports Management"; include("../includes/header.php"); ?>
+<!-- Include Font Awesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
 <style>
     body {
         font-family: 'Segoe UI', Arial, sans-serif;
@@ -44,104 +47,162 @@ $result = $conn->query($sql);
     }
 
     .admin-reports-wrapper {
-        max-width: 1100px;
-        margin: 0 auto 0 auto;
-        padding: 0 18px 36px 18px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px 16px 40px 16px;
     }
 
     .admin-reports-header {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 18px;
-        margin-top: 32px;
+        margin-bottom: 24px;
     }
 
     .admin-reports-header h2 {
         color: #2c3e50;
-        font-size: 1.7rem;
+        font-size: 1.8rem;
         margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
     .admin-reports-header a {
-        color: #040404ff;
-        padding: 8px 22px;
-        font-size: 1.05rem;
-        font-weight: bold;
-        transition: background 0.18s;
+        color: #040404;
+        padding: 8px 18px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.18s;
     }
 
     .admin-reports-header a:hover {
-        color: #c29025ff;
+        background: #e1c17a;
+        color: #fff;
     }
 
     .admin-reports-card {
         background: #fff;
         border-radius: 14px;
-        box-shadow: 0 4px 18px rgba(44, 62, 80, 0.10);
-        padding: 32px 24px 24px 24px;
-        margin-bottom: 24px;
+        box-shadow: 0 4px 18px rgba(44, 62, 80, 0.08);
+        padding: 24px;
+        overflow-x: auto;
     }
 
     .admin-reports-table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 8px;
+        min-width: 800px;
     }
 
     .admin-reports-table th,
     .admin-reports-table td {
         padding: 12px 10px;
-        border-bottom: 1.5px solid #f0f0f0;
+        border-bottom: 1px solid #e0e0e0;
         text-align: left;
-        font-size: 1.05rem;
+        font-size: 0.95rem;
+        vertical-align: middle;
     }
 
     .admin-reports-table th {
-        background: #f4f6f8;
+        background: #f9fafb;
         color: #2c3e50;
         font-weight: 600;
-    }
-
-    .admin-reports-table tr:last-child td {
-        border-bottom: none;
+        position: sticky;
+        top: 0;
+        z-index: 1;
     }
 
     .admin-reports-table tr:hover {
-        background: #f9fafb;
+        background: #f5f6f8;
     }
 
     .admin-status-pending {
         color: #e67e22;
         font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 4px;
     }
 
     .admin-status-resolved {
         color: #27ae60;
         font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 4px;
     }
 
     .admin-action-link {
         color: #2c3e50;
-        text-decoration: underline;
-        margin-right: 8px;
+        text-decoration: none;
         font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 4px;
         transition: color 0.18s;
     }
 
     .admin-action-link:hover {
         color: #e67e22;
     }
+
+    @media (max-width: 768px) {
+        .admin-reports-table th, .admin-reports-table td {
+            font-size: 0.85rem;
+            padding: 8px 6px;
+        }
+
+        .admin-reports-header h2 {
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 500px) {
+        .admin-reports-wrapper {
+            padding: 12px;
+        }
+
+        .admin-reports-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .admin-reports-header a {
+            font-size: 0.9rem;
+            padding: 6px 12px;
+        }
+
+        .admin-reports-table {
+            min-width: unset;
+            font-size: 0.85rem;
+        }
+
+        .admin-reports-table th, .admin-reports-table td {
+            padding: 6px 4px;
+        }
+    }
 </style>
+
 <div class="admin-reports-wrapper">
     <div class="admin-reports-header">
-        <h2>Reports Management</h2>
-        <a href="dashboard.php">← Back to Dashboard</a>
+        <h2><i class="fas fa-flag"></i> Reports Management</h2>
+        <a href="dashboard.php"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
     </div>
+
     <div class="admin-reports-card">
         <?php if (isset($_GET['msg']) && $_GET['msg'] === 'resolved'): ?>
-            <p style="color:#27ae60; font-weight:600; margin-bottom: 18px;">✅ Report marked as resolved.</p>
+            <p style="color:#27ae60; font-weight:600; margin-bottom: 18px;">
+                <i class="fas fa-check-circle"></i> Report marked as resolved.
+            </p>
         <?php endif; ?>
+
         <?php if ($result && $result->num_rows > 0): ?>
             <table class="admin-reports-table">
                 <tr>
@@ -160,7 +221,7 @@ $result = $conn->query($sql);
                         <td>
                             <?php if (!empty($row['house_id'])): ?>
                                 <a href="../admin/view_house.php?id=<?php echo $row['house_id']; ?>">
-                                    <?php echo htmlspecialchars($row['house_title']); ?>
+                                    <i class="fas fa-home"></i> <?php echo htmlspecialchars($row['house_title']); ?>
                                 </a>
                             <?php else: ?>
                                 <em>General User Report</em>
@@ -170,10 +231,19 @@ $result = $conn->query($sql);
                         <td><?php echo htmlspecialchars($row['reporter_name']); ?></td>
                         <td><?php echo htmlspecialchars($row['reason']); ?></td>
                         <td><?php echo nl2br(htmlspecialchars($row['details'])); ?></td>
-                        <td class="admin-status-<?php echo strtolower($row['status']); ?>"><?php echo htmlspecialchars($row['status']); ?></td>
+                        <td class="admin-status-<?php echo strtolower($row['status']); ?>">
+                            <?php if(strtolower($row['status']) === 'resolved'): ?>
+                                <i class="fas fa-check-circle"></i>
+                            <?php else: ?>
+                                <i class="fas fa-hourglass-half"></i>
+                            <?php endif; ?>
+                            <?php echo htmlspecialchars($row['status']); ?>
+                        </td>
                         <td>
                             <?php if (strtolower($row['status']) === 'pending'): ?>
-                                <a href="reports.php?resolve=<?php echo $row['report_id']; ?>" class="admin-action-link" onclick="return confirm('Mark this report as resolved?');">Resolve</a>
+                                <a href="reports.php?resolve=<?php echo $row['report_id']; ?>" class="admin-action-link" onclick="return confirm('Mark this report as resolved?');">
+                                    <i class="fas fa-clipboard-check"></i> Resolve
+                                </a>
                             <?php else: ?>
                                 <em>Resolved</em>
                             <?php endif; ?>
@@ -186,4 +256,5 @@ $result = $conn->query($sql);
         <?php endif; ?>
     </div>
 </div>
+
 <?php include("../includes/footer.php"); ?>

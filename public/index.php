@@ -1,12 +1,7 @@
-<?php session_start();
-include('../includes/header.php')
-
+<?php  session_start();
+$title = "HomePage"; 
+include("../includes/header.php"); 
 ?>
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome | Affordable Student Housing Transparency System</title>
     <style>
         body {
             margin: 0;
@@ -131,6 +126,62 @@ include('../includes/header.php')
                 gap: 18px;
             }
         }
+
+        /* feature cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            width: 100%;
+            max-width: 1100px;
+            margin: 12px auto 36px auto;
+        }
+
+        .feature-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 6px 20px rgba(20,40,80,0.06);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            transition: transform 0.16s, box-shadow 0.16s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 28px rgba(20,40,80,0.10);
+        }
+
+        .feature-icon {
+            font-size: 1.9rem;
+            color: #1f5eb1ff;
+            width: 54px;
+            height: 54px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #eef6ff;
+            border-radius: 10px;
+        }
+
+        .feature-body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feature-title {
+            font-weight: 700;
+            color: #263238;
+            margin-bottom: 6px;
+        }
+
+        .feature-desc {
+            color: #607d8b;
+            font-size: 0.95rem;
+        }
     </style>
 </head>
 
@@ -140,8 +191,14 @@ include('../includes/header.php')
             <div class="landing-title">Find Your Next Cozy Home</div>
             <div class="landing-subtitle">Welcome to the Affordable Student Housing Transparency System.<br>Agents, landlords, and tenants connect here to discover, list, and manage homes with comfort and trust.</div>
             <div class="landing-actions">
-                <a href="login.php" class="landing-btn">Login</a>
-                <a href="register.php" class="landing-btn">Register</a>
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <a href="../users/dashboard.php" class="landing-btn"><i class="fa-solid fa-user"></i>&nbsp; Dashboard</a>
+                    <a href="../houses/browse.php" class="landing-btn"><i class="fa-solid fa-house"></i>&nbsp; Browse Houses</a>
+                    <a href="../public/logout.php" class="landing-btn"><i class="fa-solid fa-right-from-bracket"></i>&nbsp; Logout</a>
+                <?php else: ?>
+                    <a href="login.php" class="landing-btn">Login</a>
+                    <a href="register.php" class="landing-btn">Register</a>
+                <?php endif; ?>
             </div>
         </div>
         <div class="landing-gallery">
@@ -158,8 +215,36 @@ include('../includes/header.php')
             </div>
         </div>
 
-        <div class="landing-footer">
-            &copy; <?php echo date('Y'); ?> Affordable Student Housing Transparency System &mdash; All rights reserved.
+        <div class="feature-grid" aria-hidden="false">
+            <a class="feature-card" href="../houses/browse.php">
+                <div class="feature-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                <div class="feature-body">
+                    <div class="feature-title">Search & Discover</div>
+                    <div class="feature-desc">Find listings near campus, by city, or filtered by price and amenities.</div>
+                </div>
+            </a>
+
+            <a class="feature-card" href="../houses/add.php">
+                <div class="feature-icon"><i class="fa-solid fa-plus"></i></div>
+                <div class="feature-body">
+                    <div class="feature-title">List Your Property</div>
+                    <div class="feature-desc">Landlords and agents can list available rooms quickly and manage applications.</div>
+                </div>
+            </a>
+
+            <a class="feature-card" href="../public/index.php#how-it-works">
+                <div class="feature-icon"><i class="fa-solid fa-circle-info"></i></div>
+                <div class="feature-body">
+                    <div class="feature-title">How It Works</div>
+                    <div class="feature-desc">Learn how tenants, agents, and landlords use the platform to connect safely.</div>
+                </div>
+            </a>
         </div>
+
+        <!-- <div class="landing-footer">
+            &copy; <?php
+            //  echo date('Y'); 
+             ?> Affordable Student Housing Transparency System &mdash; All rights reserved.
+        </div> -->
     </div>
     <?php include('../includes/footer.php') ?>

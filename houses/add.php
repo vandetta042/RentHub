@@ -54,8 +54,9 @@ if (isset($success) && isset($title) && isset($house_id)) {
 }
 ?>
 
-<?php include("../includes/header.php"); ?>
-<style>
+<?php $title = "Add House"; 
+include("../includes/header.php"); 
+?><style>
     .add-house-wrapper {
         max-width: 540px;
         margin: 36px auto 0 auto;

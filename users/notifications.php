@@ -35,8 +35,9 @@ if ($updateStmt) {
 }
 ?>
 
-<?php include('../includes/header.php'); ?>
-<style>
+<?php $title = "Notification"; 
+include("../includes/header.php"); 
+?><style>
     .notifications-container {
         max-width: 700px;
         margin: 40px auto 0 auto;
@@ -121,6 +122,7 @@ if ($updateStmt) {
         }
     }
 </style>
+<a href="dashboard.php">Back to Dashboard</a>
 <div class="notifications-container">
     <div class="notifications-title">Notifications</div>
     <?php if (empty($notifications)): ?>

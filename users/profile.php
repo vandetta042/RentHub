@@ -16,8 +16,9 @@ $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
 ?>
 
-<?php include('../includes/header.php'); ?>
-<style>
+<?php $title = "Profile"; 
+include("../includes/header.php"); 
+?><style>
     .profile-container {
         display: flex;
         flex-direction: column;

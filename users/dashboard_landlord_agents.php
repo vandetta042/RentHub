@@ -28,7 +28,10 @@ if (!empty($_SESSION['profile_pictures'])) {
 }
 ?>
 
-<?php include('../includes/header.php'); ?>
+<?php $title = "Dashboard";
+include("../includes/header.php");
+?>
+<!-- CSS-only sidebar toggle (no JS) -->
 <style>
     body {
         background: #f6f7fa;
@@ -52,6 +55,7 @@ if (!empty($_SESSION['profile_pictures'])) {
         align-items: flex-start;
         padding: 32px 20px 20px 20px;
         box-shadow: 2px 0 12px rgba(0, 0, 0, 0.04);
+        transition: transform 0.28s ease, box-shadow 0.28s ease;
     }
 
     .sidebar .logo {
@@ -80,6 +84,18 @@ if (!empty($_SESSION['profile_pictures'])) {
         display: flex;
         align-items: center;
         transition: background 0.2s, color 0.2s;
+    }
+
+    .sidebar-icon {
+        width: 22px;
+        text-align: center;
+        margin-right: 12px;
+        font-size: 1.05rem;
+        color: rgba(227, 234, 243, 0.95);
+    }
+
+    .sidebar-text {
+        display: inline-block;
     }
 
     .sidebar a.active,
@@ -169,6 +185,88 @@ if (!empty($_SESSION['profile_pictures'])) {
         padding: 36px 32px;
     }
 
+    /* new styles: stats and recent activity */
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 18px;
+        margin-top: 6px;
+    }
+
+    .stat {
+        background: linear-gradient(180deg, #fff, #fbfdff);
+        padding: 14px;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(41, 65, 97, 0.06);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-height: 72px;
+        justify-content: center;
+    }
+
+    .stat .num {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #264566;
+    }
+
+    .stat .label {
+        font-size: 0.85rem;
+        color: #6b7b8f;
+    }
+
+    .panel {
+        background: #fff;
+        padding: 16px;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(41, 65, 97, 0.04);
+    }
+
+    .recent-activity {
+        margin-top: 18px;
+    }
+
+    .recent-item {
+        padding: 10px 8px;
+        border-bottom: 1px solid #f1f4f7;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .recent-item:last-child {
+        border-bottom: none;
+    }
+
+    .recent-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #4a6a93;
+    }
+
+    .topbar-search {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .topbar-search input {
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid #e6eef6;
+        min-width: 180px;
+    }
+
+    .topbar-cta {
+        background: #1f5eb1ff;
+        color: #fff;
+        padding: 8px 12px;
+        border-radius: 8px;
+        text-decoration: none;
+    }
+
     .cards {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -210,22 +308,50 @@ if (!empty($_SESSION['profile_pictures'])) {
             flex-direction: column;
         }
 
+        /* show a toggle under the header */
+        .sidebar-toggle-label {
+            display: block;
+            position: fixed;
+            left: 16px;
+            top: calc(var(--header-height) + 6px);
+            z-index: 1250;
+        }
+
+        /* Collapsible sidebar: hidden by default on small screens */
         .sidebar {
-            width: 100%;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-            padding: 18px 10px;
+            position: fixed;
+            left: 0;
+            top: var(--header-height);
+            bottom: 0;
+            width: 240px;
+            transform: translateX(-104%);
+            z-index: 1100;
+            padding-top: calc(var(--header-height) + 6px);
+        }
+
+        /* when checked, slide in */
+        #sidebar-toggle:checked~.dashboard-container .sidebar {
+            transform: translateX(0);
+            box-shadow: 2px 0 18px rgba(0, 0, 0, 0.18);
+        }
+
+        /* dim main area when sidebar open */
+        #sidebar-toggle:checked~.dashboard-container .main::before {
+            content: '';
+            position: fixed;
+            inset: 0 0 0 0;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 1050;
         }
 
         .sidebar ul {
             display: flex;
-            flex-direction: row;
-            gap: 18px;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .main {
-            padding: 0;
+            padding-top: calc(var(--header-height) + 8px);
         }
 
         .content {
@@ -234,21 +360,29 @@ if (!empty($_SESSION['profile_pictures'])) {
     }
 </style>
 
+<!-- Mobile sidebar toggle (checkbox hack) -->
+<input type="checkbox" id="sidebar-toggle" aria-hidden="true">
+<label for="sidebar-toggle" class="sidebar-toggle-label" aria-hidden="true" title="Open menu">
+    <i class="fa-solid fa-bars"></i>
+</label>
+
 <div class="dashboard-container">
     <aside class="sidebar">
-        <div class="logo">🏠 RentHub</div>
+        <div class="logo">RentHub</div>
         <ul>
-            <li><a href="profile.php" class="sidebar-link">Profile</a></li>
-            <li><a href="../messages/inbox.php" class="sidebar-link">Enquiries <?php if ($unreadMsgCount > 0): ?><span class="sidebar-badge"><?php echo $unreadMsgCount; ?></span><?php endif; ?></a></li>
-            <li><a href="../public/logout.php" class="sidebar-link">Logout</a></li>
+            <li><a href="profile.php" class="sidebar-link"><i class="fa-solid fa-user sidebar-icon" aria-hidden="true"></i><span class="sidebar-text">Profile</span></a></li>
+            <li><a href="../messages/inbox.php" class="sidebar-link"><i class="fa-solid fa-envelope sidebar-icon" aria-hidden="true"></i><span class="sidebar-text">Enquiries</span> <?php if ($unreadMsgCount > 0): ?><span class="sidebar-badge"><?php echo $unreadMsgCount; ?></span><?php endif; ?></a></li>
+            <li><a href="../services/landlord_payment.php" class="sidebar-link"><i class="fas fa-receipt" aria-hidden="true"></i><span class="sidebar-text">received payments</span></a></li>
+
+            <li><a href="../public/logout.php" class="sidebar-link"><i class="fa-solid fa-sign-out-alt sidebar-icon" aria-hidden="true"></i><span class="sidebar-text">Logout</span></a></li>
         </ul>
     </aside>
     <main class="main">
         <header class="topbar">
-            <div class="welcome">Welcome back, <?= htmlspecialchars($_SESSION['full_name']); ?> 👋(<?php echo htmlspecialchars($_SESSION['user_type']); ?>)</div>
+            <div class="welcome">Welcome back, <?= htmlspecialchars($_SESSION['full_name']); ?> (<?php echo htmlspecialchars($_SESSION['user_type']); ?>)</div>
             <div class="topbar-right">
                 <a href="../messages/inbox.php" class="notification" title="Messages">
-                    <span>✉️</span>
+                    <i class="fa-solid fa-envelope"></i>
                     <?php if ($unreadMsgCount > 0): ?>
                         <span class="badge"><?php echo $unreadMsgCount; ?></span>
                     <?php endif; ?>
@@ -257,12 +391,93 @@ if (!empty($_SESSION['profile_pictures'])) {
             </div>
         </header>
         <section class="content">
-            <h1 style="color:#4a6a93;font-size:2rem;font-weight:600;">Dashboard</h1>
-            <div class="cards">
-                <div class="card"><a href="../houses/my_listings.php">🏠 My Listings</a></div>
-                <div class="card"><a href="#">📊 Performance</a></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+                <h1 style="color:#4a6a93;font-size:2rem;font-weight:600;margin:0;">Dashboard</h1>
+                <div class="topbar-search">
+                    <input type="search" placeholder="Search listings, messages..." aria-label="Search">
+                    <a href="../houses/add.php" class="topbar-cta"><i class="fa-solid fa-plus" style="margin-right:6px"></i>New Listing</a>
+                </div>
+            </div>
+
+            <!-- quick stats -->
+            <div class="stats" aria-hidden="false">
+                <div class="stat">
+                    <div class="num"><?php echo intval( /* placeholder */12); ?></div>
+                    <div class="label">Active Listings</div>
+                </div>
+                <div class="stat">
+                    <div class="num"><?php echo intval( /* placeholder */3); ?></div>
+                    <div class="label">New Enquiries</div>
+                </div>
+                <div class="stat">
+                    <div class="num"><?php echo intval( /* placeholder */24); ?></div>
+                    <div class="label">Total Views (week)</div>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:18px; margin-top:18px; align-items:start;">
+                <div class="panel">
+                    <h3 style="margin-top:0;">Overview</h3>
+                    <div class="cards" style="margin-top:8px;">
+                        <div class="card"><a href="../houses/my_listings.php"><i class="fa-solid fa-house fa-fw" style="margin-right:8px;color:#4a6a93;"></i> My Listings</a></div>
+                        <div class="card"><a href="#"><i class="fa-solid fa-chart-line fa-fw" style="margin-right:8px;color:#4a6a93;"></i> Performance</a></div>
+                        <div class="card"><a href="#"><i class="fa-solid fa-comments fa-fw" style="margin-right:8px;color:#4a6a93;"></i> Enquiries</a></div>
+                    </div>
+                </div>
+                <aside class="panel recent-activity">
+                    <h3 style="margin-top:0;">Recent Activity</h3>
+                    <div class="recent-item">
+                        <div class="recent-dot"></div>
+                        <div><strong><i class="fa-solid fa-envelope" style="margin-right:8px;color:#4a6a93"></i>New enquiry</strong>
+                            <div style="font-size:0.85rem;color:#6b7b8f;">Someone asked about Listing #23 • 1h ago</div>
+                        </div>
+                    </div>
+                    <div class="recent-item">
+                        <div class="recent-dot"></div>
+                        <div><strong><i class="fa-solid fa-pencil" style="margin-right:8px;color:#4a6a93"></i>Listing updated</strong>
+                            <div style="font-size:0.85rem;color:#6b7b8f;">You edited 'Studio near campus' • 2d ago</div>
+                        </div>
+                    </div>
+                    <div class="recent-item">
+                        <div class="recent-dot"></div>
+                        <div><strong><i class="fa-solid fa-comments" style="margin-right:8px;color:#4a6a93"></i>New message</strong>
+                            <div style="font-size:0.85rem;color:#6b7b8f;">You have 2 unread messages • 3d ago</div>
+                        </div>
+                    </div>
+                </aside>
             </div>
         </section>
     </main>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const toggleLabel = document.querySelector('.sidebar-toggle-label');
+
+        // close sidebar when clicking outside (on the dim overlay)
+        document.addEventListener('click', function(e) {
+            if (!toggle) return;
+            if (!toggle.checked) return;
+            if (sidebar.contains(e.target) || (toggleLabel && toggleLabel.contains(e.target))) return;
+            // clicked outside sidebar and not on toggle label -> close
+            toggle.checked = false;
+        });
+
+        // close on ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && toggle && toggle.checked) toggle.checked = false;
+        });
+
+        // Ensure label click toggles without immediate document click closure
+        if (toggleLabel) {
+            toggleLabel.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!toggle) return;
+                toggle.checked = !toggle.checked;
+            });
+        }
+    });
+</script>
 <?php include('../includes/footer.php'); ?>

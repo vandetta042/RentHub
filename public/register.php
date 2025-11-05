@@ -31,8 +31,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<?php include("../includes/header.php"); ?>
-<style>
+<?php $title = "Register"; 
+include("../includes/header.php"); 
+?><style>
     body {
         background: #f4f6f8;
     }

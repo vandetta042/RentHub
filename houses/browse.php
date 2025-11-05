@@ -20,8 +20,8 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 $offset = ($page - 1) * $limit;
 
-// --- Base query (for both count & data) ---
-$baseQuery = "FROM houses h WHERE 1=1";
+// --- Base query (only filters, no FROM here) ---
+$baseQuery = "WHERE 1=1";
 
 // --- Append filters safely ---
 if ($selectedLocation !== '') {
@@ -35,12 +35,12 @@ if ($selectedType !== '') {
 }
 
 if ($minPrice !== '') {
-    $min = (float) $minPrice;
+    $min = (float)$minPrice;
     $baseQuery .= " AND h.price >= $min";
 }
 
 if ($maxPrice !== '') {
-    $max = (float) $maxPrice;
+    $max = (float)$maxPrice;
     $baseQuery .= " AND h.price <= $max";
 }
 
@@ -50,22 +50,48 @@ if ($keyword !== '') {
 }
 
 // --- Count total rows for pagination ---
-$countQuery = "SELECT COUNT(*) as total " . $baseQuery;
+$countQuery = "SELECT COUNT(*) as total FROM houses h $baseQuery";
 $countResult = $conn->query($countQuery);
 $totalRows = ($countResult && $countResult->num_rows > 0) ? $countResult->fetch_assoc()['total'] : 0;
 $totalPages = ceil($totalRows / $limit);
 
-// --- Final data query with pagination ---
-$query = "SELECT h.house_id, h.title, h.price, h.location, h.house_type, h.description,
-                 (SELECT hi.image_url FROM house_images hi WHERE hi.house_id = h.house_id LIMIT 1) AS image_url
-          $baseQuery
-          ORDER BY h.created_at DESC
-          LIMIT $limit OFFSET $offset";
+// --- Actual query with join and pagination ---
+$query = "
+    SELECT 
+        h.house_id,
+        h.title,
+        h.price,
+        h.is_active,
+        h.location,
+        h.house_type,
+        h.description,
+        (
+            SELECT hi.image_url 
+            FROM house_images hi 
+            WHERE hi.house_id = h.house_id 
+            LIMIT 1
+        ) AS image_url,
+        u.status AS user_status
+    FROM houses h
+    JOIN users u ON u.user_id = h.user_id
+    $baseQuery
+    ORDER BY h.created_at DESC
+    LIMIT $limit OFFSET $offset
+";
 
 $result = $conn->query($query);
+
+// echo "<pre>$query</pre>";
+// exit;
+
+
+$result = $conn->query($query);
+
 ?>
 
-<?php include("../includes/header.php"); ?>
+<?php $title = "Housing Listing - RentHub"; 
+include("../includes/header.php"); 
+?>
 <style>
     .browse-header {
         display: flex;
@@ -196,6 +222,43 @@ $result = $conn->query($query);
         background: #3f88d1ff;
     }
 
+    .house-card {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 15px;
+        transition: 0.3s;
+    }
+
+    .house-card.inactive {
+        opacity: 0.6;
+        border-color: #ff4d4d;
+        background: #ffeaea;
+    }
+
+    .house-card.suspended-user {
+        opacity: 0.6;
+        border-color: #ffa500;
+        background: #fff4e0;
+        pointer-events: none;
+        border-left: 4px solid #e63946;
+
+    }
+
+    .house-card.deleted-user {
+        opacity: 0.5;
+        border-color: #888;
+        background: #f1f1f1;
+        pointer-events: none;
+        border-left: 4px solid #e63946;
+
+    }
+
+    .house-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+
     .pagination {
         display: flex;
         gap: 8px;
@@ -231,6 +294,22 @@ $result = $conn->query($query);
         margin-top: 40px;
         font-size: 1.1rem;
     }
+
+    .inactive {
+        opacity: 0.5;
+        pointer-events: none;
+        background-color: #f5f5f5;
+        border-left: 4px solid #e63946;
+    }
+
+    .lazy-img {
+        opacity: 0;
+        transition: opacity 0.6s ease-in-out;
+    }
+
+    .lazy-img:is(:not([src=""])) {
+        opacity: 1;
+    }
 </style>
 <div class="browse-header">
     <h2>Browse Available Houses</h2>
@@ -257,13 +336,37 @@ $result = $conn->query($query);
 <?php if ($result && $result->num_rows > 0): ?>
     <div class="house-list">
         <?php while ($row = $result->fetch_assoc()): ?>
-            <div class="house-card">
+            <?php
+            // Build dynamic classes based on status
+            $cardClass = '';
+            if (!$row['is_active']) {
+                $cardClass = 'inactive'; // for unavailable houses
+            } elseif ($row['user_status'] === 'suspended') {
+                $cardClass = 'suspended-user'; // for suspended landlords
+            } elseif ($row['user_status'] === 'deleted') {
+                $cardClass = 'deleted-user'; // for deleted accounts
+            }
+            ?>
+
+            <div class="house-card <?php echo $cardClass; ?>">
                 <h3><?php echo ucwords(htmlspecialchars($row['title'])); ?></h3>
                 <div class="price">₦<?php echo number_format($row['price'], 2); ?></div>
-                <div class="meta">Location: <?php echo ucwords(htmlspecialchars($row['location'])); ?> | Type: <?php echo htmlspecialchars(str_replace('_', ' ', $row['house_type'])); ?></div>
+                <div class="meta">
+                    Location: <?php echo ucwords(htmlspecialchars($row['location'])); ?> |
+                    Type: <?php echo htmlspecialchars(str_replace('_', ' ', $row['house_type'])); ?>
+                </div>
+
+                <?php if (!$row['is_active']): ?>
+                    <div class="status"><em style="color:red;">This house is currently unavailable</em></div>
+                <?php elseif ($row['user_status'] === 'suspended'): ?>
+                    <div class="status"><em style="color:orange;">Landlord account suspended</em></div>
+                <?php elseif ($row['user_status'] === 'deleted'): ?>
+                    <div class="status"><em style="color:gray;">Landlord account deleted</em></div>
+                <?php endif; ?>
+
                 <div class="desc"><?php echo nl2br(htmlspecialchars($row['description'])); ?></div>
                 <?php if (!empty($row['image_url'])): ?>
-                    <img src="../<?php echo htmlspecialchars($row['image_url']); ?>" alt="house thumbnail">
+                    <img src="../<?php echo htmlspecialchars($row['image_url']); ?>" alt="house thumbnail" loading="lazy">
                 <?php else: ?>
                     <div class="meta"><em>No image available</em></div>
                 <?php endif; ?>
@@ -271,6 +374,8 @@ $result = $conn->query($query);
             </div>
         <?php endwhile; ?>
     </div>
+
+
     <div class="pagination">
         <?php
         // Preserve filters in pagination links

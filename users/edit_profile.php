@@ -18,7 +18,9 @@ $user = $stmt->get_result()->fetch_assoc();
 ?>
 
 
-<?php include('../includes/header.php'); ?>
+<?php $title = "Edit Profile"; 
+include("../includes/header.php"); 
+?>
 <style>
     .edit-profile-container {
         display: flex;

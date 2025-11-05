@@ -11,7 +11,9 @@ $user_id = $_SESSION['user_id'];
 $result = $conn->query("SELECT * FROM houses WHERE user_id = $user_id ORDER BY created_at DESC");
 ?>
 
-<?php include('../includes/header.php') ?>
+<?php $title = "My Listings"; 
+include("../includes/header.php"); 
+?>
 <style>
     body {
         font-family: 'Segoe UI', Arial, sans-serif;
@@ -146,7 +148,7 @@ $result = $conn->query("SELECT * FROM houses WHERE user_id = $user_id ORDER BY c
     if ($result->num_rows > 0) {
         while ($house = $result->fetch_assoc()) {
             echo "<div class='my-listings-card'>";
-            echo "<div class='my-listings-title'>" . htmlspecialchars($house['title']) . "</div>";
+            echo "<div class='my-listings-title'>" . nl2br(htmlspecialchars($house['title'])) . "</div>";
             echo "<div class='my-listings-meta'><b>₦" . htmlspecialchars($house['price']) . "</b> - " . htmlspecialchars($house['location']) . " (" . htmlspecialchars($house['house_type']) . ")</div>";
             echo "<div class='my-listings-desc'>" . nl2br(htmlspecialchars($house['description'])) . "</div>";
             // Fetch images
@@ -161,7 +163,7 @@ $result = $conn->query("SELECT * FROM houses WHERE user_id = $user_id ORDER BY c
             }
             echo "<div class='my-listings-actions'>
                     <a href='edit.php?id=" . $house['house_id'] . "'>Edit</a>
-                    <a href='delete.php?id=" . $house['house_id'] . "' onclick=\"return confirm('Are you sure you want to delete this house?');\">Delete</a>
+                    <a href='delete_listing.php?id=" . $house['house_id'] . "' onclick=\"return confirm('Are you sure you want to delete this house?');\">Delete</a>
                 </div>";
             echo "</div>";
         }
